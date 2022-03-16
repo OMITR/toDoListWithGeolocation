@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TODO_list_with_geolocation">
-        <receiver android:name=".notification.Notification"
+        <receiver android:name=".notification.Notifications"
             android:enabled="true" />
         <activity
             android:name=".ui.MainActivity"

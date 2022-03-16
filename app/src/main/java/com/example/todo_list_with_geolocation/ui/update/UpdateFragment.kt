@@ -1,11 +1,9 @@
 package com.example.todo_list_with_geolocation.ui.update
 
-import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.fragment.app.Fragment
@@ -13,18 +11,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.database.TaskEntity
 import com.example.todo_list_with_geolocation.databinding.FragmentUpdateBinding
 import com.example.todo_list_with_geolocation.notification.*
+import com.example.todo_list_with_geolocation.ui.MainActivity
 import com.example.todo_list_with_geolocation.viewmodel.TaskViewModel
 import java.util.*
 
 class UpdateFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels()
-    //lateinit var binding : FragmentUpdateBinding
 
     private var _binding : FragmentUpdateBinding? = null
 
@@ -39,7 +38,7 @@ class UpdateFragment : Fragment() {
 
         binding.apply {
             createNotificationChannel()
-            updTask.setText(args.taskEntry.title)
+            updTask.setText(args.taskEntry.task)
             updSpinner.setSelection(args.taskEntry.priority)
             btnUpd.setOnClickListener {
                 if(TextUtils.isEmpty(updTask.text)) {
@@ -85,22 +84,19 @@ class UpdateFragment : Fragment() {
     }
 
     private fun scheduleNotification() {
-        val intent = Intent(activity?.applicationContext, Notification::class.java)
-        val title = "Напоминание"
-        val message = binding.updTask.text.toString()
-        intent.putExtra(titleExtra, title)
-        intent.putExtra(messageExtra, message)
+        val intent = Intent(activity?.applicationContext, Notifications::class.java)
+        intent.putExtra(TITLE_EXTRA, "Напоминание")
+        intent.putExtra(TASK_EXTRA, binding.updTask.text.toString())
 
         val pendingIntent = PendingIntent.getBroadcast(
             activity?.applicationContext,
-            notificationID,
+            NOTIFICATION_ID,
             intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val time = getDate()
-        alarmManager.setExactAndAllowWhileIdle(
+        alarmManager.set(
             AlarmManager.RTC_WAKEUP,
             time,
             pendingIntent
@@ -111,7 +107,7 @@ class UpdateFragment : Fragment() {
         val name = "Notification Channel"
         val desc = "A Description of the channel"
         val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(channelID, name, importance)
+        val channel = NotificationChannel(CHANNEL_ID, name, importance)
         channel.description = desc
         val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)

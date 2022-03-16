@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
-    var title: String,
+    var task: String,
     var priority: Int,
     var date: Long
         ):Parcelable

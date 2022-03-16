@@ -6,13 +6,13 @@ import androidx.room.*
 @Dao
 interface TaskDao {
     @Insert
-    suspend fun insert(taskEntry: TaskEntity)
+    suspend fun insert(taskEntity: TaskEntity)
 
     @Update
-    suspend fun update(taskEntry: TaskEntity)
+    suspend fun update(taskEntity: TaskEntity)
 
     @Delete
-    suspend fun delete(taskEntry: TaskEntity)
+    suspend fun delete(taskEntity: TaskEntity)
 
     @Query("DELETE FROM task_table")
     suspend fun deleteAll()
@@ -23,6 +23,6 @@ interface TaskDao {
     @Query("SELECT * FROM task_table ORDER BY priority ASC")
     fun getAllPriorityTasks() : LiveData<List<TaskEntity>>
 
-    @Query("SELECT * FROM task_table WHERE title LIKE :searchQuery ORDER BY date DESC")
+    @Query("SELECT * FROM task_table WHERE task LIKE :searchQuery ORDER BY date DESC")
     fun searchDatabase(searchQuery: String) : LiveData<List<TaskEntity>>
 }
