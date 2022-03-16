@@ -42,13 +42,12 @@ class TaskFragment : Fragment() {
         binding.apply {
             binding.recyclerView.adapter = adapter
 
-            floatingActionButton2.setOnClickListener {
+            floatingActionButton.setOnClickListener {
                 findNavController().navigate(R.id.action_taskFragment_to_addFragment)
             }
         }
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
-        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -72,18 +71,7 @@ class TaskFragment : Fragment() {
         }).attachToRecyclerView(binding.recyclerView)
 
         setHasOptionsMenu(true)
-        hideKeyboard(requireActivity())
         return binding.root
-    }
-
-    private fun hideKeyboard(activity: Activity) {
-        val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        val currentFocusedView = activity.currentFocus
-        currentFocusedView.let {
-            inputMethodManager.hideSoftInputFromWindow(
-                currentFocusedView?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS
-            )
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -102,7 +90,6 @@ class TaskFragment : Fragment() {
                 }
                 return true
             }
-
         })
     }
 

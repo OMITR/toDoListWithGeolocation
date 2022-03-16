@@ -8,18 +8,19 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="360dp"
-        android:layout_height="760dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         tools:context=".ui.add.AddFragment">
 
         <EditText
             android:id="@+id/add_task"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:ems="10"
             android:hint="Enter Task"
-            android:inputType="textPersonName"
+            android:inputType="text"
+            android:imeOptions="actionDone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,8 +28,8 @@
 
         <Spinner
             android:id="@+id/spinner"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="35dp"
             android:layout_marginTop="16dp"
             android:entries="@array/priorities"
             app:layout_constraintEnd_toEndOf="parent"
@@ -38,8 +39,8 @@
 
         <Button
             android:id="@+id/btn_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:text="Add"
             app:layout_constraintEnd_toEndOf="parent"
@@ -48,16 +49,15 @@
 
         <DatePicker
             android:id="@+id/datePicker"
-            android:layout_width="267dp"
-            android:layout_height="152dp"
+            android:layout_width="300dp"
+            android:layout_height="150dp"
             android:layout_gravity="center"
-            android:layout_marginHorizontal="-30dp"
             android:layout_marginTop="16dp"
             android:layout_weight="1"
             android:calendarViewShown="false"
             android:datePickerMode="spinner"
-            android:scaleX="0.7"
-            android:scaleY="0.7"
+            android:scaleX="1.0"
+            android:scaleY="1.0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.505"
             app:layout_constraintStart_toStartOf="parent"
@@ -65,14 +65,14 @@
 
         <TimePicker
             android:id="@+id/timePicker"
-            android:layout_width="267dp"
-            android:layout_height="152dp"
+            android:layout_width="300dp"
+            android:layout_height="150dp"
             android:layout_gravity="center"
             android:layout_marginHorizontal="-30dp"
             android:layout_marginTop="16dp"
             android:layout_weight="1"
-            android:scaleX="0.7"
-            android:scaleY="0.7"
+            android:scaleX="1.0"
+            android:scaleY="1.0"
             android:timePickerMode="spinner"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.504"
