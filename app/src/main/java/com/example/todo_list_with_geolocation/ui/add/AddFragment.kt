@@ -17,8 +17,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.database.TaskEntity
 import com.example.todo_list_with_geolocation.databinding.FragmentAddBinding
-import com.example.todo_list_with_geolocation.notification.*
-import com.example.todo_list_with_geolocation.viewmodel.TaskViewModel
+import com.example.todo_list_with_geolocation.util.*
+import com.example.todo_list_with_geolocation.viewModel.TaskViewModel
 import java.util.*
 import android.app.AlarmManager as AlarmManager
 
@@ -53,13 +53,15 @@ class AddFragment : Fragment() {
 
                 val task = addTask.text.toString()
                 val priority = spinner.selectedItemPosition
+                val isRepeating = checkBox.isChecked
 
 
                 val taskEntity = TaskEntity(
                     0,
                     task,
                     priority,
-                    getDate()
+                    getDate(),
+                    isRepeating
                 )
 
                 viewModel.insert(taskEntity)
@@ -90,7 +92,7 @@ class AddFragment : Fragment() {
     }
 
     private fun scheduleNotification() {
-        val intent = Intent(activity?.applicationContext, Notifications::class.java)
+        val intent = Intent(activity?.applicationContext, NotificationsReceiver::class.java)
         intent.putExtra(TITLE_EXTRA, "Напоминание")
         intent.putExtra(TASK_EXTRA, binding.addTask.text.toString())
 
@@ -102,11 +104,21 @@ class AddFragment : Fragment() {
 
         val alarmManager = activity?.getSystemService(ALARM_SERVICE) as AlarmManager
         val time = getDate()
-        alarmManager.set(
-            AlarmManager.RTC_WAKEUP,
-            time,
-            pendingIntent
-        )
+        if (binding.checkBox.isChecked) {
+            alarmManager.setInexactRepeating(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+            )
+        }
+        else {
+            alarmManager.setAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                pendingIntent
+            )
+        }
     }
 
     private fun createNotificationChannel() {

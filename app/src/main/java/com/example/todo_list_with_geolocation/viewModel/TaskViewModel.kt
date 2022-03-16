@@ -1,4 +1,4 @@
-package com.example.todo_list_with_geolocation.viewmodel
+package com.example.todo_list_with_geolocation.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -23,11 +23,11 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun update(taskEntity: TaskEntity) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.updateTask(taskEntity)
-        }
-    }
+//    fun update(taskEntity: TaskEntity) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            repository.updateTask(taskEntity)
+//        }
+//    }
 
     fun delete(taskEntity: TaskEntity) {
         viewModelScope.launch(Dispatchers.IO) {

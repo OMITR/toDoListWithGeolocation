@@ -12,5 +12,6 @@ data class TaskEntity(
     var id: Int,
     var task: String,
     var priority: Int,
-    var date: Long
+    var date: Long,
+    var isRepeating: Boolean
         ):Parcelable
