@@ -23,11 +23,6 @@ fun setPriority(view: TextView, priority: Int) {
     }
 }
 
-@BindingAdapter("setTimestamp")
-fun setTimestamp(view: TextView, timestamp: Long) {
-    view.text = DateFormat.getInstance().format(timestamp)
-}
-
 @BindingAdapter("setDate")
 fun setDate(view: TextView, date: Long) {
     view.text = DateFormat.getInstance().format(date)

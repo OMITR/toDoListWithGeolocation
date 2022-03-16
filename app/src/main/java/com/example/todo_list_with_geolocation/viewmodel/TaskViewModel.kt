@@ -12,16 +12,10 @@ import kotlinx.coroutines.launch
 
 class TaskViewModel(application: Application) : AndroidViewModel(application) {
     private val taskDao = TaskDatabase.getDatabase(application).taskDao()
-    private val repository : TaskRepository
+    private val repository : TaskRepository = TaskRepository(taskDao)
 
-    val getAllTasks: LiveData<List<TaskEntity>>
-    val getAllPriorityTasks: LiveData<List<TaskEntity>>
-
-    init {
-        repository = TaskRepository(taskDao)
-        getAllTasks = repository.getAllTasks()
-        getAllPriorityTasks = repository.getAllPriorityTasks()
-    }
+    val getAllTasks: LiveData<List<TaskEntity>> = repository.getAllTasks()
+    val getAllPriorityTasks: LiveData<List<TaskEntity>> = repository.getAllPriorityTasks()
 
     fun insert(taskEntity: TaskEntity) {
         viewModelScope.launch(Dispatchers.IO) {

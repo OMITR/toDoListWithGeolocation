@@ -108,16 +108,17 @@ class TaskFragment : Fragment() {
 
     fun runQuery(query: String) {
         val searchQuery = "%$query%"
-        viewModel.searchDatabase(searchQuery).observe(viewLifecycleOwner, Observer { tasks ->
+        viewModel.searchDatabase(searchQuery).observe(viewLifecycleOwner) { tasks ->
             adapter.submitList(tasks)
-        })
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.action_priority -> viewModel.getAllPriorityTasks.observe(viewLifecycleOwner, Observer { tasks ->
+            R.id.action_priority -> viewModel.getAllPriorityTasks.observe(viewLifecycleOwner
+            ) { tasks ->
                 adapter.submitList(tasks)
-            })
+            }
             R.id.action_delete_all -> deleteAllItem()
         }
         return super.onOptionsItemSelected(item)

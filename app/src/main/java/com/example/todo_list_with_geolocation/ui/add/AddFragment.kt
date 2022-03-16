@@ -36,7 +36,7 @@ class AddFragment : Fragment() {
 
         _binding = FragmentAddBinding.inflate(inflater)
 
-        val myAdapter = ArrayAdapter<String> (
+        val myAdapter = ArrayAdapter(
             requireActivity(),
             android.R.layout.simple_spinner_dropdown_item,
             resources.getStringArray(R.array.priorities)

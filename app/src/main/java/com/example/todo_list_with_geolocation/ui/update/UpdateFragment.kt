@@ -3,7 +3,6 @@ package com.example.todo_list_with_geolocation.ui.update
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.fragment.app.Fragment
@@ -11,14 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.database.TaskEntity
 import com.example.todo_list_with_geolocation.databinding.FragmentUpdateBinding
 import com.example.todo_list_with_geolocation.notification.*
-import com.example.todo_list_with_geolocation.ui.MainActivity
 import com.example.todo_list_with_geolocation.viewmodel.TaskViewModel
 import java.util.*
 
