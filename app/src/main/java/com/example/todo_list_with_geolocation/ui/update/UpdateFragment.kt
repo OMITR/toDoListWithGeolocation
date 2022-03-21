@@ -15,8 +15,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.database.TaskEntity
 import com.example.todo_list_with_geolocation.databinding.FragmentUpdateBinding
-import com.example.todo_list_with_geolocation.notification.*
-import com.example.todo_list_with_geolocation.viewmodel.TaskViewModel
+import com.example.todo_list_with_geolocation.ui.add.NOTIFICATION_ID
+import com.example.todo_list_with_geolocation.util.*
+import com.example.todo_list_with_geolocation.viewModel.TaskViewModel
 import java.util.*
 
 class UpdateFragment : Fragment() {
@@ -32,11 +33,12 @@ class UpdateFragment : Fragment() {
     ): View? {
         _binding = FragmentUpdateBinding.inflate(inflater)
         val args = UpdateFragmentArgs.fromBundle(requireArguments())
+        NOTIFICATION_ID = args.taskEntity.notificationId + 1
 
         binding.apply {
             createNotificationChannel()
-            updTask.setText(args.taskEntry.task)
-            updSpinner.setSelection(args.taskEntry.priority)
+            updTask.setText(args.taskEntity.task)
+            updSpinner.setSelection(args.taskEntity.priority)
             btnUpd.setOnClickListener {
                 if(TextUtils.isEmpty(updTask.text)) {
                     Toast.makeText(requireContext(), "It's empty!", Toast.LENGTH_SHORT).show()
@@ -45,16 +47,19 @@ class UpdateFragment : Fragment() {
 
                 val titleString = updTask.text
                 val priority = updSpinner.selectedItemPosition
+                val isRepeating = updCheckBox.isChecked
 
                 val taskEntity = TaskEntity(
-                    args.taskEntry.id,
+                    args.taskEntity.id,
                     titleString.toString(),
                     priority,
-                    getDate()
+                    getDate(),
+                    isRepeating,
+                    NOTIFICATION_ID
                 )
 
                 viewModel.update(taskEntity)
-                scheduleNotification()
+                updateNotification(NOTIFICATION_ID)
                 Toast.makeText(requireContext(), "Successfully updated!", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_updateFragment_to_taskFragment)
             }
@@ -80,8 +85,8 @@ class UpdateFragment : Fragment() {
         return date.timeInMillis
     }
 
-    private fun scheduleNotification() {
-        val intent = Intent(activity?.applicationContext, Notifications::class.java)
+    private fun updateNotification(NOTIFICATION_ID: Int) {
+        val intent = Intent(activity?.applicationContext, NotificationsReceiver::class.java)
         intent.putExtra(TITLE_EXTRA, "Напоминание")
         intent.putExtra(TASK_EXTRA, binding.updTask.text.toString())
 
@@ -93,11 +98,22 @@ class UpdateFragment : Fragment() {
 
         val alarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val time = getDate()
-        alarmManager.set(
-            AlarmManager.RTC_WAKEUP,
-            time,
-            pendingIntent
-        )
+
+        if (binding.updCheckBox.isChecked) {
+            alarmManager.setInexactRepeating(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+            )
+        }
+        else {
+            alarmManager.setAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                pendingIntent
+            )
+        }
     }
 
     private fun createNotificationChannel() {
@@ -110,3 +126,4 @@ class UpdateFragment : Fragment() {
         notificationManager.createNotificationChannel(channel)
     }
 }
+

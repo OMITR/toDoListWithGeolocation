@@ -1,4 +1,4 @@
-package com.example.todo_list_with_geolocation.viewmodel
+package com.example.todo_list_with_geolocation.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

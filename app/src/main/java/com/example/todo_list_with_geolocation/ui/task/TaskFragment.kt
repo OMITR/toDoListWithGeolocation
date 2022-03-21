@@ -1,21 +1,19 @@
 package com.example.todo_list_with_geolocation.ui.task
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.databinding.FragmentTaskBinding
-import com.example.todo_list_with_geolocation.viewmodel.TaskViewModel
+import com.example.todo_list_with_geolocation.util.TaskAdapter
+import com.example.todo_list_with_geolocation.util.TaskClickListener
+import com.example.todo_list_with_geolocation.viewModel.TaskViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class TaskFragment : Fragment() {

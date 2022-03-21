@@ -17,10 +17,18 @@ import androidx.navigation.fragment.findNavController
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.database.TaskEntity
 import com.example.todo_list_with_geolocation.databinding.FragmentAddBinding
-import com.example.todo_list_with_geolocation.notification.*
-import com.example.todo_list_with_geolocation.viewmodel.TaskViewModel
+import com.example.todo_list_with_geolocation.util.*
+import com.example.todo_list_with_geolocation.viewModel.TaskViewModel
+import java.text.SimpleDateFormat
 import java.util.*
 import android.app.AlarmManager as AlarmManager
+
+var NOTIFICATION_ID = createId()
+
+fun createId(): Int {
+    val now = Date()
+    return SimpleDateFormat("ddHHmmss", Locale.US).format(now).toInt()
+}
 
 class AddFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels()
@@ -33,7 +41,6 @@ class AddFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         _binding = FragmentAddBinding.inflate(inflater)
 
         val myAdapter = ArrayAdapter(
@@ -53,17 +60,20 @@ class AddFragment : Fragment() {
 
                 val task = addTask.text.toString()
                 val priority = spinner.selectedItemPosition
-
+                val isRepeating = checkBox.isChecked
+                val notificationId = NOTIFICATION_ID++
 
                 val taskEntity = TaskEntity(
                     0,
                     task,
                     priority,
-                    getDate()
+                    getDate(),
+                    isRepeating,
+                    notificationId
                 )
 
                 viewModel.insert(taskEntity)
-                scheduleNotification()
+                scheduleNotification(notificationId)
                 Toast.makeText(requireContext(), "Successfully added!", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_addFragment_to_taskFragment)
             }
@@ -89,24 +99,35 @@ class AddFragment : Fragment() {
         return date.timeInMillis
     }
 
-    private fun scheduleNotification() {
-        val intent = Intent(activity?.applicationContext, Notifications::class.java)
+    private fun scheduleNotification(notificationId: Int) {
+        val intent = Intent(activity?.applicationContext, NotificationsReceiver::class.java)
         intent.putExtra(TITLE_EXTRA, "Напоминание")
         intent.putExtra(TASK_EXTRA, binding.addTask.text.toString())
 
         val pendingIntent = PendingIntent.getBroadcast(
             activity?.applicationContext,
-            NOTIFICATION_ID,
+            notificationId,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager = activity?.getSystemService(ALARM_SERVICE) as AlarmManager
         val time = getDate()
-        alarmManager.set(
-            AlarmManager.RTC_WAKEUP,
-            time,
-            pendingIntent
-        )
+
+        if (binding.checkBox.isChecked) {
+            alarmManager.setInexactRepeating(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+            )
+        }
+        else {
+            alarmManager.setAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                pendingIntent
+            )
+        }
     }
 
     private fun createNotificationChannel() {

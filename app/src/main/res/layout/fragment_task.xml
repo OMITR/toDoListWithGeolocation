@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.todo_list_with_geolocation.viewmodel.TaskViewModel" />
+            type="com.example.todo_list_with_geolocation.viewModel.TaskViewModel" />
 
     </data>
 
