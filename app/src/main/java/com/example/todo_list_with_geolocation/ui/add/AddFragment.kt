@@ -34,6 +34,7 @@ class AddFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentAddBinding.inflate(inflater)
+        notificationId = (System.currentTimeMillis() /1000).toInt()
 
         val myAdapter = ArrayAdapter(
             requireActivity(),
@@ -43,6 +44,7 @@ class AddFragment : Fragment() {
 
         binding.apply {
             createNotificationChannel()
+
             spinner.adapter = myAdapter
             btnAdd.setOnClickListener {
                 if (TextUtils.isEmpty((addTask.text))) {
@@ -92,7 +94,9 @@ class AddFragment : Fragment() {
 
     private fun scheduleNotification(notificationId: Int) {
         val intent = Intent(activity?.applicationContext, NotificationsReceiver::class.java)
+        val nId = notificationId
         intent.putExtra(taskExtra, binding.addTask.text.toString())
+        intent.putExtra("notificationId", nId.toString())
 
         val pendingIntent = PendingIntent.getBroadcast(
             activity?.applicationContext,

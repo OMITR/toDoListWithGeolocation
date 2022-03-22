@@ -9,22 +9,21 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.ui.MainActivity
-import java.text.SimpleDateFormat
-import java.util.*
 
-var notificationId = SimpleDateFormat("ddHHmmss", Locale.US).format(Date()).toInt()
+var notificationId = 1
 const val channelId = "channel1"
 const val taskExtra = "task"
 
 class NotificationsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val resultIntent = Intent(context, MainActivity::class.java)
-        notificationId++
 
         val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(resultIntent)
-            getPendingIntent(notificationId, PendingIntent.FLAG_MUTABLE)
+            getPendingIntent(notificationId, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         }
+
+        var nId = intent.getStringExtra("notificationId")?.toInt()
 
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -37,6 +36,8 @@ class NotificationsReceiver : BroadcastReceiver() {
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        notificationManager.notify(notificationId, notification)
+        if (nId != null) {
+            notificationManager.notify(nId, notification)
+        }
     }
 }

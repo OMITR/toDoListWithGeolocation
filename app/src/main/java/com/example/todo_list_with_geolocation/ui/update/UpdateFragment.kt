@@ -31,13 +31,11 @@ class UpdateFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentUpdateBinding.inflate(inflater)
-
         val args = UpdateFragmentArgs.fromBundle(requireArguments())
-
-        notificationId = args.taskEntity.notificationId
 
         binding.apply {
             createNotificationChannel()
+            notificationId = args.taskEntity.notificationId
             updTask.setText(args.taskEntity.task)
             updSpinner.setSelection(args.taskEntity.priority)
             btnUpd.setOnClickListener {
@@ -88,7 +86,9 @@ class UpdateFragment : Fragment() {
 
     private fun updateNotification(notificationId: Int) {
         val intent = Intent(activity?.applicationContext, NotificationsReceiver::class.java)
+        val nId = notificationId
         intent.putExtra(taskExtra, binding.updTask.text.toString())
+        intent.putExtra("notificationId", nId.toString())
 
         val pendingIntent = PendingIntent.getBroadcast(
             activity?.applicationContext,
@@ -126,4 +126,3 @@ class UpdateFragment : Fragment() {
         notificationManager.createNotificationChannel(channel)
     }
 }
-
