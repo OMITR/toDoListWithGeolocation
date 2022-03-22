@@ -17,14 +17,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.database.TaskEntity
 import com.example.todo_list_with_geolocation.databinding.FragmentAddBinding
-import com.example.todo_list_with_geolocation.ui.update.NOTIFICATION_ID
 import com.example.todo_list_with_geolocation.util.*
 import com.example.todo_list_with_geolocation.viewModel.TaskViewModel
-import java.text.SimpleDateFormat
 import java.util.*
 import android.app.AlarmManager as AlarmManager
-
-var NOTIFICATION_ID = 0
 
 class AddFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels()
@@ -57,7 +53,6 @@ class AddFragment : Fragment() {
                 val task = addTask.text.toString()
                 val priority = spinner.selectedItemPosition
                 val isRepeating = checkBox.isChecked
-                var notificationId = SimpleDateFormat("ddHHmmss", Locale.US).format(Date()).toInt()
 
                 val taskEntity = TaskEntity(
                     0,
@@ -67,8 +62,6 @@ class AddFragment : Fragment() {
                     isRepeating,
                     notificationId
                 )
-
-                NOTIFICATION_ID = notificationId
 
                 viewModel.insert(taskEntity)
                 scheduleNotification(notificationId)
@@ -99,8 +92,7 @@ class AddFragment : Fragment() {
 
     private fun scheduleNotification(notificationId: Int) {
         val intent = Intent(activity?.applicationContext, NotificationsReceiver::class.java)
-        intent.putExtra(TITLE_EXTRA, "Напоминание")
-        intent.putExtra(TASK_EXTRA, binding.addTask.text.toString())
+        intent.putExtra(taskExtra, binding.addTask.text.toString())
 
         val pendingIntent = PendingIntent.getBroadcast(
             activity?.applicationContext,
@@ -132,7 +124,7 @@ class AddFragment : Fragment() {
         val name = "Notification Channel"
         val desc = "A Description of the channel"
         val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(CHANNEL_ID, name, importance)
+        val channel = NotificationChannel(channelId, name, importance)
         channel.description = desc
         val notificationManager = activity?.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)

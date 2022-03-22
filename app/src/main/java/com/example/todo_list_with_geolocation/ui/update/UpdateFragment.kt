@@ -19,8 +19,6 @@ import com.example.todo_list_with_geolocation.util.*
 import com.example.todo_list_with_geolocation.viewModel.TaskViewModel
 import java.util.*
 
-var NOTIFICATION_ID = 0
-
 class UpdateFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels()
 
@@ -33,7 +31,10 @@ class UpdateFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentUpdateBinding.inflate(inflater)
+
         val args = UpdateFragmentArgs.fromBundle(requireArguments())
+
+        notificationId = args.taskEntity.notificationId
 
         binding.apply {
             createNotificationChannel()
@@ -48,7 +49,6 @@ class UpdateFragment : Fragment() {
                 val titleString = updTask.text
                 val priority = updSpinner.selectedItemPosition
                 val isRepeating = updCheckBox.isChecked
-                val notificationId = args.taskEntity.notificationId
 
                 val taskEntity = TaskEntity(
                     args.taskEntity.id,
@@ -58,8 +58,6 @@ class UpdateFragment : Fragment() {
                     isRepeating,
                     notificationId
                 )
-
-                NOTIFICATION_ID = notificationId
 
                 viewModel.update(taskEntity)
                 updateNotification(notificationId)
@@ -88,14 +86,13 @@ class UpdateFragment : Fragment() {
         return date.timeInMillis
     }
 
-    private fun updateNotification(notificationID: Int) {
+    private fun updateNotification(notificationId: Int) {
         val intent = Intent(activity?.applicationContext, NotificationsReceiver::class.java)
-        intent.putExtra(TITLE_EXTRA, "Напоминание")
-        intent.putExtra(TASK_EXTRA, binding.updTask.text.toString())
+        intent.putExtra(taskExtra, binding.updTask.text.toString())
 
         val pendingIntent = PendingIntent.getBroadcast(
             activity?.applicationContext,
-            notificationID,
+            notificationId,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -123,7 +120,7 @@ class UpdateFragment : Fragment() {
         val name = "Notification Channel"
         val desc = "A Description of the channel"
         val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(CHANNEL_ID, name, importance)
+        val channel = NotificationChannel(channelId, name, importance)
         channel.description = desc
         val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
