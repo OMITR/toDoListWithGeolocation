@@ -19,7 +19,6 @@ const val taskExtra = "task"
 class NotificationsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val resultIntent = Intent(context, MainActivity::class.java)
-        notificationId++
 
         val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(resultIntent)
