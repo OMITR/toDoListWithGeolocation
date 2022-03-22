@@ -17,18 +17,14 @@ import androidx.navigation.fragment.findNavController
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.database.TaskEntity
 import com.example.todo_list_with_geolocation.databinding.FragmentAddBinding
+import com.example.todo_list_with_geolocation.ui.update.NOTIFICATION_ID
 import com.example.todo_list_with_geolocation.util.*
 import com.example.todo_list_with_geolocation.viewModel.TaskViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import android.app.AlarmManager as AlarmManager
 
-var NOTIFICATION_ID = createId()
-
-fun createId(): Int {
-    val now = Date()
-    return SimpleDateFormat("ddHHmmss", Locale.US).format(now).toInt()
-}
+var NOTIFICATION_ID = 0
 
 class AddFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels()
@@ -61,7 +57,7 @@ class AddFragment : Fragment() {
                 val task = addTask.text.toString()
                 val priority = spinner.selectedItemPosition
                 val isRepeating = checkBox.isChecked
-                val notificationId = NOTIFICATION_ID++
+                var notificationId = SimpleDateFormat("ddHHmmss", Locale.US).format(Date()).toInt()
 
                 val taskEntity = TaskEntity(
                     0,
@@ -71,6 +67,8 @@ class AddFragment : Fragment() {
                     isRepeating,
                     notificationId
                 )
+
+                NOTIFICATION_ID = notificationId
 
                 viewModel.insert(taskEntity)
                 scheduleNotification(notificationId)

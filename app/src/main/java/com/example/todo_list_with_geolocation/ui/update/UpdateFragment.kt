@@ -15,10 +15,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.database.TaskEntity
 import com.example.todo_list_with_geolocation.databinding.FragmentUpdateBinding
-import com.example.todo_list_with_geolocation.ui.add.NOTIFICATION_ID
 import com.example.todo_list_with_geolocation.util.*
 import com.example.todo_list_with_geolocation.viewModel.TaskViewModel
 import java.util.*
+
+var NOTIFICATION_ID = 0
 
 class UpdateFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels()
@@ -33,7 +34,6 @@ class UpdateFragment : Fragment() {
     ): View? {
         _binding = FragmentUpdateBinding.inflate(inflater)
         val args = UpdateFragmentArgs.fromBundle(requireArguments())
-        NOTIFICATION_ID = args.taskEntity.notificationId + 1
 
         binding.apply {
             createNotificationChannel()
@@ -48,6 +48,7 @@ class UpdateFragment : Fragment() {
                 val titleString = updTask.text
                 val priority = updSpinner.selectedItemPosition
                 val isRepeating = updCheckBox.isChecked
+                val notificationId = args.taskEntity.notificationId
 
                 val taskEntity = TaskEntity(
                     args.taskEntity.id,
@@ -55,11 +56,13 @@ class UpdateFragment : Fragment() {
                     priority,
                     getDate(),
                     isRepeating,
-                    NOTIFICATION_ID
+                    notificationId
                 )
 
+                NOTIFICATION_ID = notificationId
+
                 viewModel.update(taskEntity)
-                updateNotification(NOTIFICATION_ID)
+                updateNotification(notificationId)
                 Toast.makeText(requireContext(), "Successfully updated!", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_updateFragment_to_taskFragment)
             }
@@ -85,14 +88,14 @@ class UpdateFragment : Fragment() {
         return date.timeInMillis
     }
 
-    private fun updateNotification(NOTIFICATION_ID: Int) {
+    private fun updateNotification(notificationID: Int) {
         val intent = Intent(activity?.applicationContext, NotificationsReceiver::class.java)
         intent.putExtra(TITLE_EXTRA, "Напоминание")
         intent.putExtra(TASK_EXTRA, binding.updTask.text.toString())
 
         val pendingIntent = PendingIntent.getBroadcast(
             activity?.applicationContext,
-            NOTIFICATION_ID,
+            notificationID,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
