@@ -42,6 +42,8 @@ class AddFragment : Fragment() {
             resources.getStringArray(R.array.priorities)
         )
 
+        notificationId++
+
         binding.apply {
             createNotificationChannel()
 
