@@ -90,6 +90,12 @@ class UpdateFragment : Fragment() {
         intent.putExtra(taskExtra, binding.updTask.text.toString())
         intent.putExtra("notificationId", nId.toString())
 
+        val pendingIntentOriginal = PendingIntent.getBroadcast(
+            activity?.applicationContext,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT)
+
         val pendingIntent = PendingIntent.getBroadcast(
             activity?.applicationContext,
             notificationId,
@@ -97,6 +103,8 @@ class UpdateFragment : Fragment() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntentOriginal)
+
         val time = getDate()
 
         if (binding.updCheckBox.isChecked) {

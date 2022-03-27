@@ -1,6 +1,10 @@
 package com.example.todo_list_with_geolocation.ui.task
 
-import android.app.AlertDialog
+import android.app.AlarmManager
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
@@ -11,10 +15,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.databinding.FragmentTaskBinding
-import com.example.todo_list_with_geolocation.util.TaskAdapter
-import com.example.todo_list_with_geolocation.util.TaskClickListener
+import com.example.todo_list_with_geolocation.util.*
 import com.example.todo_list_with_geolocation.viewModel.TaskViewModel
-import com.google.android.material.snackbar.Snackbar
+
 
 class TaskFragment : Fragment() {
     private val viewModel: TaskViewModel by viewModels()
@@ -57,20 +60,31 @@ class TaskFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val taskEntity = adapter.currentList[position]
+                notificationId = taskEntity.notificationId
                 viewModel.delete(taskEntity)
-
-                Snackbar.make(binding.root, "Successfully deleted!", Snackbar.LENGTH_LONG).apply {
-                    setAction("Undo") {
-                        viewModel.insert(taskEntity)
-                    }
-                    show()
-                }
+                cancelNotification(notificationId)
             }
         }).attachToRecyclerView(binding.recyclerView)
 
         setHasOptionsMenu(true)
         return binding.root
     }
+
+    private fun cancelNotification(notificationId: Int) {
+        val alarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val intent = Intent(activity?.applicationContext, NotificationsReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            activity?.applicationContext,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+
+        alarmManager.cancel(pendingIntent)
+        notificationManager.cancel(notificationId)
+    }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -104,20 +118,22 @@ class TaskFragment : Fragment() {
             ) { tasks ->
                 adapter.submitList(tasks)
             }
-            R.id.action_delete_all -> deleteAllItem()
+//            R.id.action_delete_all -> deleteAllItem()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun deleteAllItem() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Delete All")
-            .setMessage("Are you sure?")
-            .setPositiveButton("Yes") {dialog, _ ->
-                viewModel.deleteAll()
-                dialog.dismiss()
-            }.setNegativeButton("No") {dialog, _ ->
-                dialog.dismiss()
-            }.create().show()
-    }
+//    private fun deleteAllItem() {
+//        val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//        AlertDialog.Builder(requireContext())
+//            .setTitle("Delete All")
+//            .setMessage("Are you sure?")
+//            .setPositiveButton("Yes") {dialog, _ ->
+//                viewModel.deleteAll()
+//                notificationManager.cancelAll()
+//                dialog.dismiss()
+//            }.setNegativeButton("No") {dialog, _ ->
+//                dialog.dismiss()
+//            }.create().show()
+//    }
 }

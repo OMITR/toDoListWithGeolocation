@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import com.example.todo_list_with_geolocation.R
 import com.example.todo_list_with_geolocation.ui.MainActivity
 
-var notificationId = 1
+var notificationId = 0
 const val channelId = "channel1"
 const val taskExtra = "task"
 
